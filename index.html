@@ -7,6 +7,7 @@
   <style>
     body { font-family: sans-serif; text-align: center; padding: 2rem; }
     #results { margin-top: 2rem; }
+    #status { font-weight: bold; color: #0078D4; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -16,12 +17,18 @@
     <p>Download: <span id="download">-</span> Mbps</p>
     <p>Upload: <span id="upload">-</span> Mbps</p>
     <p>Ping: <span id="ping">-</span> ms</p>
+    <p id="status"></p>
   </div>
 
   <script>
     let s;
 
     function startSpeedTest() {
+      document.getElementById("status").textContent = "Running speed test...";
+      document.getElementById("download").textContent = "-";
+      document.getElementById("upload").textContent = "-";
+      document.getElementById("ping").textContent = "-";
+
       s = new Speedtest({
         telemetry_level: "basic",
         time_ul: 5,
@@ -39,6 +46,8 @@
       };
 
       s.onend = function(data) {
+        document.getElementById("status").textContent = "Submitting results...";
+
         const url = "https://script.google.com/macros/s/AKfycbw35x2ssWDONIa8R03jViKJ0sHw9x8C6CsJGYvj65vHk271m763hDs_DOpKRjfLzeTl/exec";
 
         fetch(url, {
@@ -55,9 +64,12 @@
           })
         })
         .then(() => {
-          alert("Speed test results submitted successfully.");
+          document.getElementById("status").textContent = "✅ Speed test completed and submitted successfully.";
         })
-        .catch(err => console.error("Submission failed:", err));
+        .catch(err => {
+          console.error("Submission failed:", err);
+          document.getElementById("status").textContent = "❌ Submission failed. Please try again.";
+        });
       };
 
       s.start();
@@ -65,4 +77,5 @@
   </script>
 </body>
 </html>
+
 
