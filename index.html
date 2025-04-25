@@ -2,8 +2,9 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Internet Speed Test (Enhanced)</title>
+  <title>Internet Speed Test (Robust)</title>
   <script src="https://librespeed.org/librespeed/speedtest.js"></script>
+  <script src="https://librespeed.org/librespeed/speedtest_custom.js"></script>
   <style>
     body { font-family: sans-serif; text-align: center; padding: 2rem; background: #f4f4f4; }
     h1 { color: #333; }
@@ -47,16 +48,8 @@
       document.getElementById("ping").textContent = "-";
       document.getElementById("spinner").style.display = "inline-block";
 
-      s = new Speedtest({
-        telemetry_level: "basic",
-        time_ul: 5,
-        time_dl: 5,
-        getIp_ispInfo: false,
-        url_dl: "https://librespeed.org/backend/garbage.php",
-        url_ul: "https://librespeed.org/backend/empty.php",
-        url_ping: "https://librespeed.org/backend/empty.php"
-      });
-
+      // robust version using the official Librespeed init logic
+      s = new Speedtest();
       s.onupdate = function(data) {
         document.getElementById("download").textContent = (data.dl || 0).toFixed(2);
         document.getElementById("upload").textContent = (data.ul || 0).toFixed(2);
@@ -92,7 +85,19 @@
         });
       };
 
-      s.start();
+      try {
+        s.start();
+        setTimeout(() => {
+          if (!s._test_state || s._test_state === 0) {
+            document.getElementById("spinner").style.display = "none";
+            document.getElementById("status").textContent = "⚠️ Speed test timed out. Please try again later.";
+          }
+        }, 15000); // 15-second timeout fallback
+      } catch (e) {
+        document.getElementById("spinner").style.display = "none";
+        document.getElementById("status").textContent = "❌ Error starting speed test.";
+        console.error(e);
+      }
     }
   </script>
 </body>
