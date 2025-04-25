@@ -2,22 +2,39 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Speed Test + Auto Submit</title>
+  <title>Internet Speed Test (Enhanced)</title>
   <script src="https://librespeed.org/librespeed/speedtest.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 2rem; }
-    #results { margin-top: 2rem; }
+    body { font-family: sans-serif; text-align: center; padding: 2rem; background: #f4f4f4; }
+    h1 { color: #333; }
+    #results { margin-top: 2rem; padding: 1rem; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
     #status { font-weight: bold; color: #0078D4; margin-top: 1rem; }
+    .metric-label { font-weight: bold; }
+    .spinner {
+      margin-top: 1rem;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #0078D4;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <h1>Internet Speed Test</h1>
   <button onclick="startSpeedTest()">Start Test</button>
   <div id="results">
-    <p>Download: <span id="download">-</span> Mbps</p>
-    <p>Upload: <span id="upload">-</span> Mbps</p>
-    <p>Ping: <span id="ping">-</span> ms</p>
+    <p><span class="metric-label">Download:</span> <span id="download">-</span> Mbps</p>
+    <p><span class="metric-label">Upload:</span> <span id="upload">-</span> Mbps</p>
+    <p><span class="metric-label">Ping:</span> <span id="ping">-</span> ms</p>
     <p id="status"></p>
+    <div id="spinner" class="spinner" style="display: none;"></div>
   </div>
 
   <script>
@@ -28,6 +45,7 @@
       document.getElementById("download").textContent = "-";
       document.getElementById("upload").textContent = "-";
       document.getElementById("ping").textContent = "-";
+      document.getElementById("spinner").style.display = "inline-block";
 
       s = new Speedtest({
         telemetry_level: "basic",
@@ -64,10 +82,12 @@
           })
         })
         .then(() => {
+          document.getElementById("spinner").style.display = "none";
           document.getElementById("status").textContent = "✅ Speed test completed and submitted successfully.";
         })
         .catch(err => {
           console.error("Submission failed:", err);
+          document.getElementById("spinner").style.display = "none";
           document.getElementById("status").textContent = "❌ Submission failed. Please try again.";
         });
       };
@@ -77,5 +97,6 @@
   </script>
 </body>
 </html>
+
 
 
