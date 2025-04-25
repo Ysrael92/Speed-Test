@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,9 +19,19 @@
   </div>
 
   <script>
-    let s = new Speedtest();
+    let s;
 
     function startSpeedTest() {
+      s = new Speedtest({
+        telemetry_level: "basic",
+        time_ul: 5,
+        time_dl: 5,
+        getIp_ispInfo: false,
+        url_dl: "https://librespeed.org/backend/garbage.php",
+        url_ul: "https://librespeed.org/backend/empty.php",
+        url_ping: "https://librespeed.org/backend/empty.php"
+      });
+
       s.onupdate = function(data) {
         document.getElementById("download").textContent = (data.dl || 0).toFixed(2);
         document.getElementById("upload").textContent = (data.ul || 0).toFixed(2);
@@ -30,7 +39,6 @@
       };
 
       s.onend = function(data) {
-        // Updated with your actual Google Apps Script URL
         const url = "https://script.google.com/macros/s/AKfycbw35x2ssWDONIa8R03jViKJ0sHw9x8C6CsJGYvj65vHk271m763hDs_DOpKRjfLzeTl/exec";
 
         fetch(url, {
@@ -57,3 +65,4 @@
   </script>
 </body>
 </html>
+
